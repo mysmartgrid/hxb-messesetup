@@ -2,20 +2,117 @@ include devices.hbh;
 include endpoints.hbh;
 
 # programs
-module lamp_switch($POS_THRESHOLD, $NEG_THRESHOLD, $LAMP) {
-	states { init, on }
+module threshold_switch($OFF_THRESHOLD, $ON_THRESHOLD, $DEVICE) {
+	states { init, on, off}
 	in(init) {
-		if(ep notebook.power_balance > $POS_THRESHOLD) {
+		always {
+			write $DEVICE.power := 0;
+			goto off;
+		}
+	}
+	in(on) {
+		if(ep intersolar1.power_balance > $ON_THRESHOLD) {
+			write $DEVICE.power := 0;
+			goto init;
+		}
+	}
+	in(off) {
+		if(ep intersolar1.power_balance < $OFF_THRESHOLD) {
+			write $DEVICE.power := 1;
+			goto on;
+		}
+	}
+}
+
+module button_switch($LAMP) {
+	states { init, on, off}
+	in(init) {
+		always {
+			write $LAMP.power := 0;
+			goto off;
+		}
+	}
+	in(on) {
+		if(ep wall_pushbutton.PressedHexapushbuttons != 1 ) 
+		{
+			write $LAMP.power := 0;
+			goto init;
+		}
+	}
+	in(on) {
+		if(ep backup_pushbutton.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 0;
+			goto init;
+		}
+	}
+	in(on) {
+		if(ep handheld_pushbutton3.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 0;
+			goto init;
+		}
+	}
+	in(on) {
+		if(ep handheld_pushbutton4.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 0;
+			goto init;
+		}
+	}
+	in(off) {
+		if(ep wall_pushbutton.PressedHexapushbuttons != 1 ) 
+		{
+			write $LAMP.power := 1;
+			goto on;
+		}
+	}
+	in(off) {
+		if(ep backup_pushbutton.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 1;
+			goto on;
+		}
+	}
+	in(off) {
+		if(ep handheld_pushbutton3.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 1;
+			goto on;
+		}
+	}
+	in(off) {
+		if(ep handheld_pushbutton4.PressedHexapushbuttons != 1)
+		{
+			write $LAMP.power := 1;
+			goto on;
+		}
+	}
+}
+
+module timeout_switch($OFF_THRESHOLD, $ON_THRESHOLD, $ON_TIMEOUT, $OFF_TIMEOUT, $LAMP) {
+	states { init, on, waiting}
+	in(init) {
+		if(ep intersolar1.power_balance < $OFF_THRESHOLD) {
 			write $LAMP.power := 1;
 			goto on;
 		}
 	}
 	in(on) {
-		if(ep notebook.power_balance < $NEG_THRESHOLD) {
+		if(timeout $ON_TIMEOUT) {
+			write $LAMP.power := 0;
+			goto waiting;
+		}
+	}
+	in(waiting) {
+		if(timeout $OFF_TIMEOUT) {
 			write $LAMP.power := 0;
 			goto init;
 		}
 	}
 }
 
-instance demo : lamp_switch(+10, -10, lamp_a);
+# Instances 
+instance heatpump_sm : threshold_switch(0, 2000, heatpump);
+instance lamp_sm : button_switch(lamp);
+instance washingmachine_sm : timeout_switch(0, 2500, i10, i50, washingmachine);
