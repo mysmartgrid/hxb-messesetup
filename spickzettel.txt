@@ -1,0 +1,11 @@
+ping6 fd01:2::50:c4ff:fe04:83d1
+hexaswitch off fd01:2::50:c4ff:fe04:83d1
+hexaswitch listen -I en1
+
+
+hexaswitch -c send -e 42 -I en1 -d 5 -i ff05::114 -v -200
+
+esprimo:
+cd ~/tmp/hxb-messesetup
+unset LC_CTYPE
+make

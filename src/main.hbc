@@ -5,17 +5,17 @@ include endpoints.hbh;
 module lamp_switch($POS_THRESHOLD, $NEG_THRESHOLD, $LAMP) {
 	states { init, on }
 	in(init) {
-		if(ep power_simulator.power_balance > $POS_THRESHOLD) {
+		if(ep notebook.power_balance > $POS_THRESHOLD) {
 			write $LAMP.power := 1;
 			goto on;
 		}
 	}
 	in(on) {
-		if(ep power_simulator.power_balance < $NEG_THRESHOLD) {
+		if(ep notebook.power_balance < $NEG_THRESHOLD) {
 			write $LAMP.power := 0;
 			goto init;
 		}
 	}
 }
 
-instance heatpump_switch : lamp_switch(0, 0, heatpump);
+instance demo : lamp_switch(+10, -10, lamp_a);
