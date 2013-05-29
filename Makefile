@@ -35,8 +35,8 @@ assemble: $(BUILDDIR) compile
 	cd $(BUILDDIR) && $(HBA) -i $(LAMP_ASM) -o $(LAMP_BIN) -d $(DATATYPEDEF)
 
 upload: $(BUILDDIR) assemble
-	#cd $(BUILDDIR) && $(HBU) -r 10 -p $(HEATPUMP_BIN)
-	#cd $(BUILDDIR) && $(HBU) -r 10 -p $(WASHINGMACHINE_BIN)
+	cd $(BUILDDIR) && $(HBU) -r 10 -p $(HEATPUMP_BIN)
+	cd $(BUILDDIR) && $(HBU) -r 10 -p $(WASHINGMACHINE_BIN)
 	cd $(BUILDDIR) && $(HBU) -r 10 -p $(LAMP_BIN)
 
 $(BUILDDIR):
