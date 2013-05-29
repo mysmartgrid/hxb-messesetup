@@ -3,23 +3,29 @@ include endpoints.hbh;
 
 # programs
 module threshold_switch($OFF_THRESHOLD, $ON_THRESHOLD, $DEVICE) {
-	states { init, on, off}
+	states { init, off, ready, on}
 	in(init) {
 		always {
 			write $DEVICE.power := 0;
 			goto off;
 		}
 	}
-	in(on) {
-		if(ep intersolar1.power_balance > $ON_THRESHOLD) {
+	in(off) {
+		if(ep intersolar1.power_balance < $ON_THRESHOLD) {
 			write $DEVICE.power := 0;
-			goto init;
+			goto ready;
 		}
 	}
-	in(off) {
-		if(ep intersolar1.power_balance < $OFF_THRESHOLD) {
+	in(ready) {
+		if(ep intersolar1.power_balance < $ON_THRESHOLD) {
 			write $DEVICE.power := 1;
 			goto on;
+		}
+	}
+	in(on) {
+		if(ep intersolar1.power_balance > $OFF_THRESHOLD) {
+			write $DEVICE.power := 0;
+			goto init;
 		}
 	}
 }
@@ -90,10 +96,10 @@ module button_switch($LAMP) {
 	}
 }
 
-module timeout_switch($OFF_THRESHOLD, $ON_THRESHOLD, $ON_TIMEOUT, $OFF_TIMEOUT, $LAMP) {
+module timeout_switch($ON_THRESHOLD, $ON_TIMEOUT, $OFF_TIMEOUT, $LAMP) {
 	states { init, on, waiting}
-	in(init) {
-		if(ep intersolar1.power_balance < $OFF_THRESHOLD) {
+	in(init) { # also: off
+		if(ep intersolar1.power_balance < $ON_THRESHOLD) {
 			write $LAMP.power := 1;
 			goto on;
 		}
@@ -113,6 +119,6 @@ module timeout_switch($OFF_THRESHOLD, $ON_THRESHOLD, $ON_TIMEOUT, $OFF_TIMEOUT, 
 }
 
 # Instances 
-instance heatpump_sm : threshold_switch(0, 2000, heatpump);
+instance heatpump_sm : threshold_switch(0, -2500, heatpump);
 instance lamp_sm : button_switch(lamp);
-instance washingmachine_sm : timeout_switch(0, 2500, i10, i50, washingmachine);
+instance washingmachine_sm : timeout_switch(-2000, i10, i50, washingmachine);
