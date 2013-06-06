@@ -16,6 +16,13 @@ device lamp {
 	eids { 0, 1, 2, 4, 9, 10, 11, 12 }
 }
 
+# The wall switch for the lamp.
+# This one doesn't broadcast it's power consumption
+device lamp_nopower {
+	ip fd03:1::50:c4ff:fe04:8121;
+	eids { 0, 1, 2, 4, 9, 10, 11, 12 }
+}
+
 # The pushbutton which is mounted in the wall.
 device wall_pushbutton {
 	ip fd03:1::b5:5aff:fe0b:303;

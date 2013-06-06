@@ -17,6 +17,8 @@ WASHINGMACHINE_ASM = $(TARGET)washingmachine.hba
 WASHINGMACHINE_BIN = $(TARGET)washingmachine.hbx
 LAMP_ASM = $(TARGET)lamp.hba
 LAMP_BIN = $(TARGET)lamp.hbx
+LAMP_NOPOWER_ASM = $(TARGET)lamp_nopower.hba
+LAMP_NOPOWER_BIN = $(TARGET)lamp_nopower.hbx
 
 all: compile png assemble
 
@@ -33,11 +35,13 @@ assemble: $(BUILDDIR) compile
 	cd $(BUILDDIR) && $(HBA) -i $(HEATPUMP_ASM) -o $(HEATPUMP_BIN) -d $(DATATYPEDEF)
 	cd $(BUILDDIR) && $(HBA) -i $(WASHINGMACHINE_ASM) -o $(WASHINGMACHINE_BIN) -d $(DATATYPEDEF)
 	cd $(BUILDDIR) && $(HBA) -i $(LAMP_ASM) -o $(LAMP_BIN) -d $(DATATYPEDEF)
+	cd $(BUILDDIR) && $(HBA) -i $(LAMP_NOPOWER_ASM) -o $(LAMP_NOPOWER_BIN) -d $(DATATYPEDEF)
 
 upload: $(BUILDDIR) assemble
 	cd $(BUILDDIR) && $(HBU) -r 10 -p $(HEATPUMP_BIN)
 	cd $(BUILDDIR) && $(HBU) -r 10 -p $(WASHINGMACHINE_BIN)
 	cd $(BUILDDIR) && $(HBU) -r 10 -p $(LAMP_BIN)
+	cd $(BUILDDIR) && $(HBU) -r 10 -p $(LAMP_NOPOWER_BIN)
 
 $(BUILDDIR):
 	@-mkdir $(BUILDDIR)

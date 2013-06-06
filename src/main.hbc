@@ -121,4 +121,5 @@ module timeout_switch($ON_THRESHOLD, $ON_TIMEOUT, $OFF_TIMEOUT, $LAMP) {
 # Instances 
 instance heatpump_sm : threshold_switch(0, -2500, heatpump);
 instance lamp_sm : button_switch(lamp);
+instance lamp_nopower_sm : button_switch(lamp_nopower);
 instance washingmachine_sm : timeout_switch(-2000, i10, i50, washingmachine);
