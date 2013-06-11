@@ -66,6 +66,13 @@ module button_switch($LAMP) {
 			goto init;
 		}
 	}
+	in(on) {
+		if(ep intersolar1.ClickedHexapushbuttons  == 39)
+		{
+			write $LAMP.power := 0;
+			goto init;
+		}
+	}
 	in(off) {
 		if(ep wall_pushbutton.PressedHexapushbuttons == 1 ) 
 		{
@@ -89,6 +96,13 @@ module button_switch($LAMP) {
 	}
 	in(off) {
 		if(ep handheld_pushbutton4.PressedHexapushbuttons == 1)
+		{
+			write $LAMP.power := 1;
+			goto on;
+		}
+	}
+	in(off) {
+		if(ep intersolar1.ClickedHexapushbuttons  == 43)
 		{
 			write $LAMP.power := 1;
 			goto on;

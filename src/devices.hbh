@@ -51,5 +51,5 @@ device handheld_pushbutton4 {
 # our demo machine 1
 device intersolar1 {
 	ip fd03::a002;
-	eids { 42 }
+	eids { 25, 42 }
 }
